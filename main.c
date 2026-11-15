@@ -30,6 +30,21 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle,EFI_SYSTEM_TABLE *SystemTable)
 
         Print(L"\nKey received (scan code: 0x%x, character: 0x%x).\n", Key.ScanCode, Key.UnicodeChar);
 
+        // 0x0dは、CR（エンター）
+        // 0x20は、スペース
+        // 0x7eは、チルダ
+        // 0x08は、バックスペース
+        if (Key.UnicodeChar >= ' ' && Key.UnicodeChar <= '~') { // 文字としての範囲
+            Print(L"\nKey: %c\n", Key.UnicodeChar);
+        }
+
+        if (Key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
+            Print(L"Enter!\n");
+        }
+        if (Key.UnicodeChar == CHAR_BACKSPACE) {
+            Print(L"BackSpace\n");
+        }
+
         if (Key.ScanCode == SCAN_ESC) {
             break;
         }

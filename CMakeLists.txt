@@ -10,7 +10,8 @@ set(EFI_LIB_DIR /usr/lib)
 set(EFI_CRT ${EFI_LIB_DIR}/crt0-efi-x86_64.o)
 set(EFI_LDS ${EFI_LIB_DIR}/elf_x86_64_efi.lds)
 
-add_library(uefi_obj OBJECT main.c)
+add_library(uefi_obj OBJECT main.c
+)
 target_include_directories(uefi_obj PRIVATE ${EFI_INCLUDE} ${EFI_ARCH_INCLUDE})
 
 target_compile_options(uefi_obj PRIVATE
