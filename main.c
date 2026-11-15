@@ -14,30 +14,26 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle,EFI_SYSTEM_TABLE *SystemTable)
           SystemTable->Hdr.Revision & 0xffff);
     Print(L"\nPress any key to return to the firmware.\n");
 
-    EFI_STATUS Status;
-    UINTN EventIndex;
-    EFI_INPUT_KEY Key;
+    EFI_STATUS Status = 0;
+    UINTN EventIndex = 0;
+    EFI_INPUT_KEY Key = {};
 
-    do {
+
+    while (1) {
         Status = uefi_call_wrapper(SystemTable->BootServices->WaitForEvent, 3,
-                                   1, &SystemTable->ConIn->WaitForKey, &EventIndex);
+                           1, &SystemTable->ConIn->WaitForKey, &EventIndex);
         if (EFI_ERROR(Status)) {
-            Print(L"Waiting for keyboard input failed: 0x%lx\n", Status);
-            return Status;
+            break;
         }
-
         Status = uefi_call_wrapper(SystemTable->ConIn->ReadKeyStroke, 2,
-                                   SystemTable->ConIn, &Key);
-    } while (Status == EFI_NOT_READY);
+                           SystemTable->ConIn, &Key);
 
-    if (EFI_ERROR(Status)) {
-        Print(L"Reading keyboard input failed: 0x%lx\n", Status);
-        return Status;
+        Print(L"\nKey received (scan code: 0x%x, character: 0x%x).\n", Key.ScanCode, Key.UnicodeChar);
+
+        if (Key.ScanCode == SCAN_ESC) {
+            break;
+        }
     }
-
-    Print(L"\nKey received (scan code: 0x%x, character: 0x%x).\n",
-          Key.ScanCode, Key.UnicodeChar);
-    Print(L"Returning to the firmware...\n");
 
     return EFI_SUCCESS;
 }
