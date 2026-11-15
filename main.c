@@ -34,5 +34,9 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle,EFI_SYSTEM_TABLE *SystemTable)
         return Status;
     }
 
+    Print(L"\nKey received (scan code: 0x%x, character: 0x%x).\n",
+          Key.ScanCode, Key.UnicodeChar);
+    Print(L"Returning to the firmware...\n");
+
     return EFI_SUCCESS;
 }
