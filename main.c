@@ -19,14 +19,15 @@ EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle,EFI_SYSTEM_TABLE *SystemTable)
     EFI_INPUT_KEY Key;
 
     do {
-        Status = SystemTable->BootServices->WaitForEvent(
-            1, &SystemTable->ConIn->WaitForKey, &EventIndex);
+        Status = uefi_call_wrapper(SystemTable->BootServices->WaitForEvent, 3,
+                                   1, &SystemTable->ConIn->WaitForKey, &EventIndex);
         if (EFI_ERROR(Status)) {
             Print(L"Waiting for keyboard input failed: 0x%lx\n", Status);
             return Status;
         }
 
-        Status = SystemTable->ConIn->ReadKeyStroke(SystemTable->ConIn, &Key);
+        Status = uefi_call_wrapper(SystemTable->ConIn->ReadKeyStroke, 2,
+                                   SystemTable->ConIn, &Key);
     } while (Status == EFI_NOT_READY);
 
     if (EFI_ERROR(Status)) {
